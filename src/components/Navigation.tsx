@@ -20,7 +20,7 @@ const Navigation = () => {
       label: "Contact",
     },
     {
-      href: "https://drive.google.com/file/d/1vvbPWc1YNkTWhyhvjUfLo5xqkxjnvPh9/view?usp=sharing",
+      href: "https://drive.google.com/file/d/1Ofh32_gaIL-0pNA6W6Vje99FeIF3lb_s/view?usp=sharing",
       label: "Resume",
     },
   ];
