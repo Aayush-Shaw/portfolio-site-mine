@@ -85,4 +85,4 @@ Add `VITE_EMAILJS_*` vars in **Vercel → Project Settings → Environment Varia
 
 ## License
 
-© 2025 Aayush Shaw
+© 2026 Aayush Shaw
