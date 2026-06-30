@@ -1,6 +1,6 @@
 import { Helmet } from "react-helmet";
 import { Phone, Mail, MapPin, Linkedin } from "lucide-react";
-import heroImage from "@/assets/hero22.png";
+import heroImage from "@/assets/hero22.webp";
 import { useEffect, useRef, useState } from "react";
 
 export default function HeroSection() {
@@ -74,6 +74,8 @@ export default function HeroSection() {
                 alt="Aayush Shaw - Professional Portrait"
                 // Enforce exact match on md+; mobile falls back to class height
                 style={imgHeight ? { height: `${imgHeight}px` } : undefined}
+                fetchPriority="high"
+                loading="eager"
                 className="w-full h-[450px] md:h-auto object-cover object-top rounded-3xl shadow-lg"
               />
             </div>

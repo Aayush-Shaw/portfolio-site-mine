@@ -1,4 +1,4 @@
-import experienceImage from '@/assets/expr.jpeg';
+import experienceImage from '@/assets/expr.webp';
 import { useEffect, useRef, useState } from 'react';
 
 const ExperienceSection = () => {
@@ -154,6 +154,7 @@ const ExperienceSection = () => {
                 src={experienceImage}
                 alt="Professional working environment"
                 style={imgHeight ? { height: `${imgHeight}px` } : undefined}
+                loading="lazy"
                 className="w-full h-[450px] md:h-auto object-cover object-right rounded-3xl shadow-lg"
               />
             </div>
