@@ -1,11 +1,13 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Send } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import emailjs from '@emailjs/browser';
 
-const EMAILJS_SERVICE_ID = "service_xgw02od";
-const EMAILJS_TEMPLATE_ID = "template_vusf2rg";
-const EMAILJS_PUBLIC_KEY = "rtjqY29YIRo4iYE0v";
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+const EMAILJS_PUBLIC_KEY = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+const COOLDOWN_MS = 30_000; // 30-second cooldown after submission
 
 const ContactSection = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +18,8 @@ const ContactSection = () => {
     honeypot: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCooldown, setIsCooldown] = useState(false);
+  const lastSubmitTime = useRef<number>(0);
   const { toast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -35,6 +39,18 @@ const ContactSection = () => {
       return;
     }
 
+    // Rate limiting: enforce cooldown between submissions
+    const now = Date.now();
+    if (now - lastSubmitTime.current < COOLDOWN_MS) {
+      const remainingSec = Math.ceil((COOLDOWN_MS - (now - lastSubmitTime.current)) / 1000);
+      toast({
+        title: "Please wait",
+        description: `You can submit again in ${remainingSec} seconds.`,
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -50,13 +66,16 @@ const ContactSection = () => {
         { publicKey: EMAILJS_PUBLIC_KEY }
       );
 
+      lastSubmitTime.current = Date.now();
+      setIsCooldown(true);
+      setTimeout(() => setIsCooldown(false), COOLDOWN_MS);
+
       toast({
         title: "Message Sent!",
         description: "Thank you for your message. I'll get back to you soon.",
       });
       setFormData({ firstName: '', lastName: '', email: '', message: '', honeypot: '' });
     } catch (err) {
-      console.error("EmailJS error:", err);
       toast({
         title: "Error",
         description: "Failed to send your message. Please try again later.",
@@ -109,6 +128,7 @@ const ContactSection = () => {
                     value={formData.firstName}
                     onChange={handleChange}
                     required
+                    maxLength={50}
                     className="w-full bg-transparent border-0 border-b-[0.5px] border-[var(--portfolio-dark-card)] pb-2 focus:outline-none focus:border-[#6c757d] text-[var(--portfolio-dark-card)] placeholder-gray-500"
                   />
                 </div>
@@ -123,6 +143,7 @@ const ContactSection = () => {
                     value={formData.lastName}
                     onChange={handleChange}
                     required
+                    maxLength={50}
                     className="w-full bg-transparent border-0 border-b-[0.5px] border-[var(--portfolio-dark-card)] pb-2 focus:outline-none focus:border-[#6c757d] text-[var(--portfolio-dark-card)] placeholder-gray-500"
                   />
                 </div>
@@ -137,6 +158,7 @@ const ContactSection = () => {
                     value={formData.email}
                     onChange={handleChange}
                     required
+                    maxLength={100}
                     className="w-full bg-transparent border-0 border-b-[0.5px] border-[var(--portfolio-dark-card)] pb-2 focus:outline-none focus:border-[#6c757d] text-[var(--portfolio-dark-card)] placeholder-gray-500"
                   />
                 </div>
@@ -150,6 +172,7 @@ const ContactSection = () => {
                     value={formData.message}
                     onChange={handleChange}
                     required
+                    maxLength={2000}
                     rows={4}
                     className="w-full bg-transparent border-0 border-b-[0.5px] border-[var(--portfolio-dark-card)] pb-2 focus:outline-none focus:border-[#6c757d] text-[var(--portfolio-dark-card)] placeholder-gray-500 resize-none"
                   />
@@ -168,7 +191,7 @@ const ContactSection = () => {
                 <div className="pt-4 flex justify-end">
                   <button
                     type="submit"
-                    disabled={isSubmitting}
+                    disabled={isSubmitting || isCooldown}
                     className="
                       bg-[var(--portfolio-dark-card)] text-[var(--portfolio-bg)] border border-[var(--portfolio-dark-card)]
                       w-full lg:w-auto lg:px-12 py-3 rounded-full text-base 
@@ -177,7 +200,7 @@ const ContactSection = () => {
                       hover:bg-transparent hover:text-[var(--portfolio-dark-card)] hover:border-[0.5px] hover:border-[var(--portfolio-dark-card)]
                     "
                   >
-                    {isSubmitting ? 'Sending...' : 'Submit'}
+                    {isSubmitting ? 'Sending...' : isCooldown ? 'Please wait...' : 'Submit'}
                   </button>
                 </div>
               </div>

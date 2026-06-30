@@ -24,7 +24,7 @@ const Navigation = () => {
       label: "Resume",
     },
   ];
-  const scrollToSection = (href) => {
+  const scrollToSection = (href: string) => {
     if (href.startsWith("#")) {
       const element = document.querySelector(href);
       if (element) {
@@ -33,7 +33,7 @@ const Navigation = () => {
         });
       }
     } else {
-      window.open(href, "_blank"); // open resume in new tab
+      window.open(href, "_blank", "noopener,noreferrer");
     }
     setIsMenuOpen(false);
   };

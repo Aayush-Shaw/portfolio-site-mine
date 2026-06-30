@@ -7,18 +7,51 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
+
+# Build output
 dist
 dist-ssr
+*.tsbuildinfo
+.cache
+
+# Environment files (NEVER commit secrets)
+.env
+.env.local
+.env.*.local
+.env.development
+.env.production
+
+# Lock files (using npm — ignore bun)
+bun.lockb
+
+# Local overrides
 *.local
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.lnk
+
+# Test & coverage
+coverage/
+.nyc_output/
+
+# Deployment platform local config
+.vercel/
+.netlify/
+
+# AI assistant working directory
+.gemini/
